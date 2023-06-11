@@ -11,6 +11,7 @@ async function main() {
   const user =  accounts[1]
   console.log(deployer.address,'\n',user.address);
 
+  
   // Get instance of creator, then show it's address and balance
 
   const tokenContract = await ethers.getContract("Token")

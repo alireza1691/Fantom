@@ -38,6 +38,15 @@ module.exports = async () => {
     
     })
 
+    const Oracle = await deploy("Oracle", {
+        from: deployer,
+        args: TokenArguments,
+        log: true,
+        waitConfirmations: waitBlockConfirmations,
+    
+    })
+
+
 }
 
 module.exports.tags = ["all", "SafeT"]
