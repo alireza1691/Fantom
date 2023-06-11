@@ -2,6 +2,9 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract WeatherOracle {
+
+    // Fantom oracle testnet address : 	0xCC79157eb46F5624204f47AB42b3906cAA40eaB7
+
     //mapping from jobId => completion status for smart contract interactions to check;
     //default false for all + non-existent
     mapping(uint => bool) public jobStatus;

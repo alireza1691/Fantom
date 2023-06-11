@@ -1,17 +1,20 @@
 
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+// pragma solidity ^0.8.0;
 
 
 
-// // pragma solidity ^0.8.0;
+// // // pragma solidity ^0.8.0;
 pragma solidity ^0.8.17;
 
 // Importing the Chainlink Client contract from OpenZeppelin
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+  
+    
+abstract contract OracleContract is ChainlinkClient, ConfirmedOwner {
 
-contract OracleContract is ChainlinkClient, ConfirmedOwner {
+    event RequestFulfilled(bytes32 indexed requestId, bytes indexed data);
 
     using Chainlink for Chainlink.Request;
 
@@ -26,17 +29,17 @@ contract OracleContract is ChainlinkClient, ConfirmedOwner {
     // The result of the oracle job
     uint256 public result;
     
-    constructor() public ConfirmedOwner(msg.sender) {
+    constructor() ConfirmedOwner(msg.sender) {
         // Set up the Chainlink client with a default endpoint and a link token address
-        setChainlinkToken(0x514910771AF9Ca656af840dff83E8264EcF986CA);
-        setChainlinkOracle(0xc99B3D447826532722E41bc36e644ba3479E4365);
+        setChainlinkToken(0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F);
+        setChainlinkOracle(0xCC79157eb46F5624204f47AB42b3906cAA40eaB7);
         
         // Set up the job ID and fee for the oracle job
         jobId = "29fa9aa13bf1468788b7cc4a500a45b8";
         fee = 0.1 * 10 ** 18; // 0.1 LINK
     }
     
-     event RequestFulfilled(bytes32 indexed requestId, bytes indexed data);
+     
     function requestResult() public {
         // Create a new Chainlink request with the specified parameters
         Chainlink.Request memory req = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
@@ -67,7 +70,7 @@ contract OracleContract is ChainlinkClient, ConfirmedOwner {
         result = _result;
     }
 
-        function fulfillBytes(
+    function fulfillBytes(
         bytes32 requestId,
         bytes memory bytesData
     ) public recordChainlinkFulfillment(requestId) {
