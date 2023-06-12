@@ -51,12 +51,12 @@ async function updateDataByInput(data, jobId) {
 async function listenForEvents() {
   while(true){
       //initialize a contract listener for emmisions of the "NewJob" event, see ethers.js for docs.
-      contract.on("RequestData", async () => {
+      contract.on("NewJob", async () => {
           //use lat and lon to call API.
           var data = await callAPI();
           if(data != "ERROR"){
-              //send data to updateWeather function on blockchain if temp is received.
-              await contract.RequestData(data, jobId);
+              //send data to function on blockchain if data is received.
+              await contract.updateData(data);
           }
       });
   }

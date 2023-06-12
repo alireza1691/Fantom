@@ -22,27 +22,13 @@ var contract =  new ethers.Contract(contractAddress, contractAbiFile.abi, provid
 
 async function callAPI(){
   try {
-      
-      axios({
-        method: 'get',
-        url: API_URL,
-        // responseType: 'stream',
-        headers:{
-            "X-RapidAPI-Key": X_RAPID_API_KEY,
-            "X-RapidAPI-Host": X_RAPID_API_HOST,
-                }
-      }).then(function (response) {
-          console.log( "Data:",response.data);
-        });
-      return response.data;
-        // If we want to call API using just a URL and we have not any headers, we can replace this line instead of defining method,url and headers:
-        // const res = await axios.get(`enter URL here`);
+    const data = await contract.requestMultiplePrices();
+      return data;
   } catch (err) {
       return "ERROR";
   }
 }
 
-callAPI()
 
 async function updateDataByInput(data, jobId) {
   await contract.updateData(data, jobId);
@@ -51,12 +37,12 @@ async function updateDataByInput(data, jobId) {
 async function listenForEvents() {
   while(true){
       //initialize a contract listener for emmisions of the "NewJob" event, see ethers.js for docs.
-      contract.on("NewJob", async () => {
+      contract.on("RequestMultipleFulfilled", async () => {
           //use lat and lon to call API.
           var data = await callAPI();
           if(data != "ERROR"){
               //send data to updateWeather function on blockchain if temp is received.
-              await contract.updateData(data, jobId);
+              const data = await contract.requestMultiplePrices();
           }
       });
   }

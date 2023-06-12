@@ -23,17 +23,17 @@ contract IndependentOracle {
         jobId = initialId;
     } 
 
-    function getData(bytes memory data, uint jobId) public {
+    function getData(bytes memory data) public {
         //emit event to API with data and JobId
         emit NewJob(data, jobId);
         //increment jobId for next job/function call
         jobId++;
     }
 
-    function updateData(bytes memory data, uint _jobId)public {
+    function updateData(bytes memory data)public {
         //when update weather is called by node.js upon API results, data is updated
-        jobResults[_jobId] = data;
-        jobStatus[_jobId] = true;
+        jobResults[jobId] = data;
+        jobStatus[jobId] = true;
 
         //Users can now check status and result via automatic view function
         //for public vars like these mappings
