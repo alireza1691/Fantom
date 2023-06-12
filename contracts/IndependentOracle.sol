@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-contract WeatherOracle {
+contract IndependentOracle {
 
     // Fantom oracle testnet address : 	0xCC79157eb46F5624204f47AB42b3906cAA40eaB7
 
@@ -11,31 +11,33 @@ contract WeatherOracle {
 
     //mapping jobId => temp result. Defaultfor no result is 0.
     //A true jobStatus with a 0 job value implies the result is actually 0
-    mapping(uint => uint) public jobResults;
+    mapping(uint => bytes) public jobResults;
 
     //current jobId available
     uint jobId;
 
     //event to trigger Oracle API
-    event NewJob(uint lat, uint lon, uint jobId);
+    event NewJob(bytes data, uint jobId);
 
     constructor(uint initialId){
         jobId = initialId;
     } 
 
-    function getWeather(uint lat, uint lon) public {
+    function getData(bytes memory data, uint jobId) public {
         //emit event to API with data and JobId
-        emit NewJob(lat, lon, jobId);
+        emit NewJob(data, jobId);
         //increment jobId for next job/function call
         jobId++;
     }
 
-    function updateWeather(uint temp, uint _jobId)public {
+    function updateData(bytes memory data, uint _jobId)public {
         //when update weather is called by node.js upon API results, data is updated
-        jobResults[_jobId] = temp;
+        jobResults[_jobId] = data;
         jobStatus[_jobId] = true;
 
         //Users can now check status and result via automatic view function
         //for public vars like these mappings
     }
+
+
 }

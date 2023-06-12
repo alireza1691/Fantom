@@ -1,5 +1,6 @@
 const { ethers, network } = require("hardhat")
 const { developmentChains, VERIFICATION_BLOCK_CONFIRMATIONS } = require("../helper-hardhat-config")
+
  
 module.exports = async () => {
 
@@ -10,43 +11,16 @@ module.exports = async () => {
         : VERIFICATION_BLOCK_CONFIRMATIONS
 
     log("----------------------------------------------------")
-    const creationFee = ethers.utils.parseEther("0.01")
 
-    // const ERC20CreatorArguments = [creationFee]
-    // const ERC721CreatorArguments = []
-    // const ERC20Creator = await deploy("ERC20Creator", {
-    //     from: deployer,
-    //     args: ERC20CreatorArguments,
-    //     log: true,
-    //     waitConfirmations: waitBlockConfirmations,
-    // })
-
-    const SafeTreasury = await deploy("SafeTreasury", {
+    const OracleContract = await deploy("OracleContract", {
         from: deployer,
         args: [],
         log: true,
         waitConfirmations: waitBlockConfirmations,
-    })
-    //(string memory _name, string memory _symbol, uint256 _mintFee ,uint256 _maxSupply, address _owner, string memory _uri) ERC721(_name,_symbol)  {
-
-    const TokenArguments = ["test","tst"]
-    const Token = await deploy("Token", {
-        from: deployer,
-        args: TokenArguments,
-        log: true,
-        waitConfirmations: waitBlockConfirmations,
     
     })
 
-    const Oracle = await deploy("Oracle", {
-        from: deployer,
-        args: TokenArguments,
-        log: true,
-        waitConfirmations: waitBlockConfirmations,
-    
-    })
-
-
+    console.log(OracleContract);
 }
 
-module.exports.tags = ["all", "SafeT"]
+module.exports.tags = ["all", "Oracle"]

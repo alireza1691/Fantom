@@ -2,11 +2,10 @@ const axios =  require('axios');
 const apiKey = "YOUR_API_KEY";
 const city = "New York";
 const requests = require('request')
-const accounts = await ethers.getSigners()
-const deployer = accounts[0]
-const user =  accounts[1]
 const {hre, ethers, network, getNamedAccounts} = require("hardhat");
 const { getContractFactory } = require('@nomicfoundation/hardhat-ethers/types');
+const { Contract } = require('hardhat/internal/hardhat-network/stack-traces/model');
+const contractJsonFile = require("../artifacts/contracts/OracleContract.sol/OracleContract.json")
 
 
 
@@ -36,7 +35,15 @@ const { getContractFactory } = require('@nomicfoundation/hardhat-ethers/types');
 // response = requests.post(url, headers=headers, json=data)
 // print(response.json())
 
-async function getWeather(){
+// const accounts = await ethers.getSigners()
+// const deployer = accounts[0]
+// const user =  accounts[1]
+const provider = new ethers.providers.JsonRpcProvider(process.env.RPC)
+const contractAddress = process.env.ORC_CTRC_ADD
+
+async function getResp(){
+
+    // As an example we trying get weather data from API
     axios({
         method: 'get',
         url: 'https://weatherapi-com.p.rapidapi.com/current.json?q=33.44%2C-94.04',
@@ -49,10 +56,9 @@ async function getWeather(){
           console.log(response.data);
         });
 
-
-        const oracleInst = await ethers.getContract("Oracle")
-        const data = await oracleInst.requestResult()
-        console.log(data);
+        // const oracleInst = new ethers.Contract(contractAddress, contractJsonFile.abi, provider)
+        // const data = await oracleInst.requestResult()
+        // console.log(data);
 }
 
-getWeather();
+getResp();

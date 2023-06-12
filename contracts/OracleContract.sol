@@ -12,13 +12,14 @@ import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
   
     
-abstract contract OracleContract is ChainlinkClient, ConfirmedOwner {
+contract OracleContract is ChainlinkClient, ConfirmedOwner {
 
     event RequestFulfilled(bytes32 indexed requestId, bytes indexed data);
 
     using Chainlink for Chainlink.Request;
 
     bytes public data;
+    
     string public image_url;
     // The address of the oracle node
     address private oracle;
@@ -29,10 +30,10 @@ abstract contract OracleContract is ChainlinkClient, ConfirmedOwner {
     // The result of the oracle job
     uint256 public result;
     
-    constructor() ConfirmedOwner(msg.sender) {
+    constructor(address chainLinkTokenAddress, address chainlinkOracleAddress) ConfirmedOwner(msg.sender) {
         // Set up the Chainlink client with a default endpoint and a link token address
-        setChainlinkToken(0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F);
-        setChainlinkOracle(0xCC79157eb46F5624204f47AB42b3906cAA40eaB7);
+        setChainlinkToken(chainLinkTokenAddress);
+        setChainlinkOracle(chainlinkOracleAddress);
         
         // Set up the job ID and fee for the oracle job
         jobId = "29fa9aa13bf1468788b7cc4a500a45b8";

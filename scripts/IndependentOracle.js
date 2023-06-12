@@ -3,13 +3,16 @@ const fs = require("fs");
 const axios = require('axios');
 const ethers = require('ethers');
 // const { ethers } = require('hardhat');
-const contractAbiFile = require("../artifacts/contracts/WeatherOracle.sol/WeatherOracle.json")
+const contractAbiFile = require("../artifacts/contracts/IndependentOracle.sol/IndependentOracle.json")
 
 //intialize Web3 with the Url of our environment as a variable.
 const provider = new ethers.providers.JsonRpcProvider(process.env.RPC)
 
 //get contract address and abi file path from env vars.
 const contractAddress = process.env.CONTRACT_ADDRESS;
+const API_URL = process.env.API_URL
+const X_RAPID_API_KEY = process.env.X_RAPID_API_KEY
+const X_RAPID_API_HOST = process.env.X_RAPID_API_HOST
 // const contractAbi = JSON.parse(fs.readFileSync(process.env.ABI)).abi;
 
 //initialize contract variable.
@@ -19,20 +22,21 @@ var contract =  new ethers.Contract(contractAddress, contractAbiFile.abi, provid
 
 async function callAPI(){
   try {
-      // const res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${process.env.API_KEY}`);
-      const res = axios({
+      
+      axios({
         method: 'get',
-        url: 'https://weatherapi-com.p.rapidapi.com/current.json?q=33.44%2C-94.04',
+        url: API_URL,
         // responseType: 'stream',
         headers:{
-            "X-RapidAPI-Key": "c5317ac92emshf99b62d5c91a47ep10cf15jsnea9079ea4a43",
-            "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com",
+            "X-RapidAPI-Key": X_RAPID_API_KEY,
+            "X-RapidAPI-Host": X_RAPID_API_HOST,
                 }
       }).then(function (response) {
           console.log( "Data:",response.data);
         });
-      return res.data.main.temp;
-
+      return response.data;
+        // If we want to call API using just a URL and we have not any headers, we can replace this line instead of defining method,url and headers:
+        // const res = await axios.get(`enter URL here`);
   } catch (err) {
       return "ERROR";
   }
@@ -40,31 +44,23 @@ async function callAPI(){
 
 callAPI()
 
+async function updateDataByInput(data, jobId) {
+  await contract.updateData(data, jobId);
+}
+
 async function listenForEvents() {
   while(true){
       //initialize a contract listener for emmisions of the "NewJob" event, see ethers.js for docs.
-      contract.on("NewJob", async (lat, lon, jobId) => {
+      contract.on("RequestData", async () => {
           //use lat and lon to call API.
-          var temp = await callAPI(lat, lon);
-          if(temp != "ERROR"){
+          var data = await callAPI();
+          if(data != "ERROR"){
               //send data to updateWeather function on blockchain if temp is received.
-              await contract.updateWeather(temp, jobId);
+              await contract.RequestData(data, jobId);
           }
       });
   }
 }
 
-// listenForEvents();
+listenForEvents();
 
-// //While loop until program is canceled to continue to receive events.
-// while(true){
-//     //initialize a contract listener for emmisions of the "NewJob" event, see web3.js for docs.
-//     contract.on("NewJob", async (lat, lon, jobId) => {
-//         //use lat and lon to call API.
-//         var temp = await callAPI(lat, lon);
-//         if(temp != "ERROR"){
-//             //send data to updateWeather function on blockchain if temp is received.
-//             await contract.methods.updateWeather(temp, jobId).send();
-//         }
-//     })
-// }
