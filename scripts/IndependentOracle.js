@@ -2,7 +2,6 @@ require('dotenv').config();
 const fs = require("fs");
 const axios = require('axios');
 const ethers = require('ethers');
-// const { ethers } = require('hardhat');
 const contractAbiFile = require("../artifacts/contracts/IndependentOracle.sol/IndependentOracle.json")
 
 //intialize Web3 with the Url of our environment as a variable.
@@ -17,7 +16,7 @@ const X_RAPID_API_HOST = process.env.X_RAPID_API_HOST
 
 //initialize contract variable.
 var contract =  new ethers.Contract(contractAddress, contractAbiFile.abi, provider);
-//simple function for calling API with lat and long, returning temp from JSON(see included doc link in article).
+//simple function for calling API.
 
 
 async function callAPI(){
@@ -40,12 +39,6 @@ async function callAPI(){
   } catch (err) {
       return "ERROR";
   }
-}
-
-callAPI()
-
-async function updateDataByInput(data, jobId) {
-  await contract.updateData(data, jobId);
 }
 
 async function listenForEvents() {
