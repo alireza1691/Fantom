@@ -53,14 +53,22 @@ uint256 private previousTimeStamp;
     // Whenever previousTimeStamp + period > current timeStamp, price should update
 uint256 private immutable period;
 
+address private immutable owner;
+
     // Constructor requires address of interface and period
     constructor(address _priceAddressAggregator,uint256 _period) {
         dataFeed = AggregatorV3Interface(
             _priceAddressAggregator
         );
         period = _period;
+        owner = msg.sender;
     }
 
+
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
     /**
      * Returns the latest answer form oracle.
      * Note that if the period was not passed, it returns the latest price.
@@ -101,7 +109,16 @@ uint256 private immutable period;
 
     // This function will do something if one of the notification events, emmited.
     // If price goes up/down higher than 5% => notification event emited => offchain process => this function will call
-    function doSomething() public {}
+    function doSomething() external {
+        // For example we can transfer some token to specific address if price goes above 5%
+        // To doing this we need import ERC20Interface from openzeppelin
+        // Also we need a function to deposit ERC20 Token or even receive function to receive natice token of the smart contract
+        // After that we can transfer Specific amount of token if 'IncreaseNotification' event is emitted like this:
+        // IERC20(address of the token).transfer(to, amount);
+    }  
+
+    // Something that we want to do only by the owner of the contract such as withdraw funds.
+    function doSomethingByOnwer() external onlyOwner{}
 
 
     // Also we can get price of another tokens using their AGGREGATOR address:
